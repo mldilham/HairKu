@@ -1,14 +1,13 @@
 <?php
 
 use App\Http\Controllers\Barber\ServiceController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\BarberController;
 use App\Http\Controllers\User\BookingController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('/barbers', [BarberController::class, 'index'])->name('barbers.index');
 Route::get('/barbers/{id}', [BarberController::class, 'show'])->name('barbers.show');

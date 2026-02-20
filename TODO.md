@@ -1,42 +1,23 @@
-# TODO - CRUD Services & Review & Rating
+# TODO - HairKu Redesign (Modern Clean + Accent Bold)
 
-## Completed ✅
+## Progress Tracking - COMPLETED ✓
 
-### Barber Services CRUD:
+- [x]   1. tailwind.config.js - Tambah font Poppins & custom orange accent
+- [x]   2. welcome.blade.php - Hero Section dengan orange CTA
+- [x]   3. welcome.blade.php - Services Section (grid card)
+- [x]   4. welcome.blade.php - Barbers Section (card modern)
+- [x]   5. welcome.blade.php - Reviews Section
+- [x]   6. navigation.blade.php - Navbar dengan orange accent
+- [x]   7. barbers/index.blade.php - Card barber modern
+- [x]   8. barbers/show.blade.php - Detail page styling
+- [x]   9. guest.blade.php - Background light gray
+- [x]   10. auth/login.blade.php - Orange accent styling
+- [x]   11. auth/register.blade.php - Orange accent styling
+- [x]   12. components/primary-button.blade.php - Orange button
 
-- [x] Tambah layanan - ServiceController + create.blade.php
-- [x] Edit layanan - ServiceController + edit.blade.php
-- [x] Hapus layanan - ServiceController::destroy()
-- [x] List layanan miliknya saja - ServiceController::index() dengan filter barber_id
-- [x] Validasi harga & durasi - Validasi di store() dan update()
+## Style Guide Applied:
 
-### Booking System:
-
-- [x] Barber: Booking management (accept, reject, onTheWay, complete)
-- [x] User: Create booking, cancel booking, view bookings
-- [x] Fix route method (PATCH instead of POST)
-
-### Review & Rating:
-
-- [x] User hanya bisa review jika status completed
-- [x] Simpan rating (1-5) dengan comment opsional
-- [x] Hitung rata-rata rating barber (getAverageRating)
-- [x] Hitung total review (getReviewCount)
-- [x] Tampilkan rating di detail barber (barbers/show.blade.php)
-- [x] Tampilkan rating di daftar barber (barbers/index.blade.php)
-- [x] Form review dengan star rating (user/reviews/create.blade.php)
-
-## Files Created:
-
-- app/Http/Controllers/User/ReviewController.php
-- app/Http/Controllers/User/BarberController.php
-- resources/views/user/reviews/create.blade.php
-- resources/views/barbers/index.blade.php (updated)
-- resources/views/barbers/show.blade.php (updated)
-
-## Files Modified:
-
-- app/Models/Barber.php - added getAverageRating() and getReviewCount()
-- routes/web.php - added review routes
-- resources/views/user/bookings/index.blade.php - added review button
-- resources/views/barber/bookings/index.blade.php - fixed PATCH method
+- **Font:** Poppins
+- **Accent Color:** Bright Orange #F97316
+- **Background:** White / Very Light Gray (#F9FAFB)
+- **Layout:** Clean dengan white space yang banyak
