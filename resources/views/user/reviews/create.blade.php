@@ -1,78 +1,141 @@
 <x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Beri Review') }}
-        </h2>
-    </x-slot>
+    <section class="py-5" style="background-color: var(--light-bg);">
+        <div class="container py-4">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div>
+                    <h2 class="fw-bold mb-1">Beri <span class="text-primary-custom">Review</span></h2>
+                    <p class="text-muted mb-0">Bagikan pengalaman Anda setelah menggunakan layanan kami</p>
+                </div>
+                <a href="{{ route('user.bookings.index') }}" class="btn btn-outline-primary">
+                    <i class="bi bi-arrow-left me-2"></i> Kembali
+                </a>
+            </div>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    <!-- Info Booking -->
-                    <div class="mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
-                        <h3 class="text-lg font-semibold mb-2">Detail Booking</h3>
-                        <p><span class="font-medium">Barber:</span> {{ $barber->shop_name }}</p>
-                        <p><span class="font-medium">Layanan:</span> {{ $booking->service->service_name }}</p>
-                        <p><span class="font-medium">Tanggal:</span> {{ \Carbon\Carbon::parse($booking->booking_date)->format('d/m/Y') }}</p>
-                        <p><span class="font-medium">Jam:</span> {{ $booking->booking_time }}</p>
+            <div class="row g-4">
+                <div class="col-lg-8">
+                    <div class="custom-card">
+                        <!-- Info Booking -->
+                        <div class="mb-4 p-4 rounded-3" style="background-color: #FFF7ED;">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    @if($barber->photo)
+                                        <img src="{{ asset('storage/' . $barber->photo) }}"
+                                             alt="{{ $barber->shop_name }}"
+                                             class="img-fluid rounded-3"
+                                             style="object-fit: cover; height: 60px; width: 100%;">
+                                    @else
+                                        <div class="bg-primary-custom rounded-3 d-flex align-items-center justify-content-center"
+                                             style="height: 60px; width: 100%;">
+                                            <span class="text-white fw-bold">{{ substr($barber->shop_name, 0, 1) }}</span>
+                                        </div>
+                                    @endif
+                                </div>
+                                <div class="col-md-10 mt-3 mt-md-0">
+                                    <h5 class="fw-bold mb-1">{{ $barber->shop_name }}</h5>
+                                    <p class="text-muted mb-0 small">
+                                        <i class="bi bi-scissors me-1"></i> {{ $booking->service->service_name }} &bull;
+                                        <i class="bi bi-calendar me-1"></i> {{ \Carbon\Carbon::parse($booking->booking_date)->format('d/m/Y') }} &bull;
+                                        <i class="bi bi-clock me-1"></i> {{ $booking->booking_time }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <form method="POST" action="{{ route('user.reviews.store') }}">
+                            @csrf
+                            <input type="hidden" name="booking_id" value="{{ $booking->id }}">
+
+                            <!-- Rating -->
+                            <div class="mb-4">
+                                <label class="form-label fw-bold">
+                                    <i class="bi bi-star me-2 text-primary-custom"></i>Rating
+                                </label>
+                                <div class="d-flex gap-2" id="star-container">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <button type="button"
+                                                class="btn star-btn"
+                                                data-rating="{{ $i }}"
+                                                onmouseenter="highlightStars({{ $i }})"
+                                                onmouseleave="resetStars()"
+                                                onclick="selectStar({{ $i }})">
+                                            <i class="bi bi-star star-icon fs-1"></i>
+                                        </button>
+                                    @endfor
+                                </div>
+                                <input type="hidden" name="rating" id="rating-input" value="">
+                                <div class="mt-2">
+                                    <span id="rating-text" class="text-muted">Klik bintang untuk rating</span>
+                                </div>
+                                @error('rating')
+                                    <div class="text-danger small mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <!-- Comment -->
+                            <div class="mb-4">
+                                <label for="comment" class="form-label fw-bold">
+                                    <i class="bi bi-chat-dots me-2 text-primary-custom"></i>Komentar (Opsional)
+                                </label>
+                                <textarea name="comment"
+                                          id="comment"
+                                          rows="5"
+                                          class="form-control"
+                                          placeholder="Tulis pengalaman Anda...">{{ old('comment') }}</textarea>
+                                @error('comment')
+                                    <div class="text-danger small mt-2">{{ $message }}</div>
+                                @enderror
+                            </div>
+
+                            <div class="d-flex gap-3 mt-4">
+                                <a href="{{ route('user.bookings.index') }}" class="btn btn-outline-secondary btn-lg">
+                                    Batal
+                                </a>
+                                <button type="submit" class="btn btn-primary btn-lg flex-grow-1">
+                                    <i class="bi bi-send me-2"></i> Kirim Review
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-lg-4">
+                    <div class="custom-card">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-lightbulb me-2 text-primary-custom"></i>Tips Review
+                        </h5>
+                        <ul class="list-unstyled">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-primary-custom me-2"></i>
+                                <span class="text-muted">Jelaskan pengalaman Anda secara detail</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-primary-custom me-2"></i>
+                                <span class="text-muted">Sebutkan hal yang Anda suka</span>
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-primary-custom me-2"></i>
+                                <span class="text-muted">Berikan saran untuk perbaikan</span>
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle text-primary-custom me-2"></i>
+                                <span class="text-muted">Jujur dan objektif dalam penilaian</span>
+                            </li>
+                        </ul>
                     </div>
 
-                    <form method="POST" action="{{ route('user.reviews.store') }}">
-                        @csrf
-                        <input type="hidden" name="booking_id" value="{{ $booking->id }}">
-
-                        <!-- Rating with Hover Effects -->
-                        <div class="mb-6">
-                            <x-input-label for="rating" :value="__('Rating')" />
-                            <div class="flex items-center gap-1 mt-3" id="star-container">
-                                @for($i = 1; $i <= 5; $i++)
-                                    <label class="cursor-pointer relative">
-                                        <input type="radio" name="rating" value="{{ $i }}" class="sr-only peer" required>
-                                        <span class="star text-4xl text-gray-300 transition-all duration-150 select-none"
-                                              data-rating="{{ $i }}"
-                                              onmouseenter="highlightStars({{ $i }})"
-                                              onmouseleave="resetStars()"
-                                              onclick="selectStar({{ $i }})">
-                                            ★
-                                        </span>
-                                        <!-- Tooltip -->
-                                        <span class="absolute -bottom-8 left-1/2 -translate-x-1/2 text-xs font-medium text-white bg-gray-900 px-2 py-1 rounded opacity-0 peer-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                                            {{ $i }} {{ $i == 1 ? 'Buruk' : ($i == 2 ? 'Kurang' : ($i == 3 ? 'Cukup' : ($i == 4 ? 'Bagus' : 'Sangat Bagus'))) }}
-                                        </span>
-                                    </label>
-                                @endfor
-                            </div>
-                            <!-- Rating Label -->
-                            <div class="mt-3 h-6">
-                                <span id="rating-text" class="text-sm font-semibold text-indigo-600 dark:text-indigo-400">
-                                    Klik bintang untuk rating
-                                </span>
-                            </div>
-                            <x-input-error :messages="$errors->get('rating')" class="mt-2" />
-                        </div>
-
-                        <!-- Comment -->
-                        <div class="mb-4">
-                            <x-input-label for="comment" :value="__('Komentar (Opsional)')" />
-                            <textarea name="comment" id="comment" rows="4" class="block mt-1 w-full border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 focus:border-indigo-500 dark:focus:border-indigo-500 focus:ring-indigo-500 dark:focus:ring-indigo-500 rounded-md shadow-sm" placeholder="Tulis pengalaman Anda..."></textarea>
-                            <x-input-error :messages="$errors->get('comment')" class="mt-2" />
-                        </div>
-
-                        <div class="flex items-center justify-end mt-4">
-                            <a href="{{ route('user.bookings.index') }}" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800 mr-4">
-                                {{ __('Batal') }}
-                            </a>
-
-                            <x-primary-button>
-                                {{ __('Simpan Review') }}
-                            </x-primary-button>
-                        </div>
-                    </form>
+                    <div class="custom-card mt-4">
+                        <h5 class="fw-bold mb-3">
+                            <i class="bi bi-gift me-2 text-primary-custom"></i>Terima Kasih!
+                        </h5>
+                        <p class="text-muted small mb-0">
+                            Terima kasih telah menggunakan layanan HairKu. Review Anda membantu kami meningkatkan kualitas layanan kami.
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    </section>
 
     <script>
         const ratingLabels = {
@@ -86,44 +149,60 @@
         let selectedRating = 0;
 
         function highlightStars(rating) {
-            const stars = document.querySelectorAll('.star');
+            const stars = document.querySelectorAll('.star-icon');
             stars.forEach((star, index) => {
                 if (index < rating) {
-                    star.classList.remove('text-gray-300');
-                    star.classList.add('text-yellow-400', 'scale-110');
+                    star.classList.remove('text-muted', 'text-warning');
+                    star.classList.add('text-warning');
                 } else {
-                    star.classList.remove('text-yellow-400', 'scale-110');
-                    star.classList.add('text-gray-300');
+                    star.classList.remove('text-warning');
+                    star.classList.add('text-muted');
                 }
             });
-            document.getElementById('rating-text').textContent = ratingLabels[rating];
-            document.getElementById('rating-text').classList.add('text-yellow-600');
+
+            const ratingText = document.getElementById('rating-text');
+            ratingText.textContent = ratingLabels[rating];
+            ratingText.classList.remove('text-muted');
+            ratingText.classList.add('text-warning', 'fw-bold');
         }
 
         function resetStars() {
-            const stars = document.querySelectorAll('.star');
+            const stars = document.querySelectorAll('.star-icon');
+            stars.forEach((star, index) => {
+                if (selectedRating > 0 && index < selectedRating) {
+                    star.classList.remove('text-muted');
+                    star.classList.add('text-warning');
+                } else {
+                    star.classList.remove('text-warning');
+                    star.classList.add('text-muted');
+                }
+            });
+
+            const ratingText = document.getElementById('rating-text');
             if (selectedRating > 0) {
-                highlightStars(selectedRating);
-                document.getElementById('rating-text').textContent = ratingLabels[selectedRating];
+                ratingText.textContent = '✓ ' + ratingLabels[selectedRating];
+                ratingText.classList.remove('text-muted');
+                ratingText.classList.add('text-success', 'fw-bold');
             } else {
-                stars.forEach(star => {
-                    star.classList.remove('text-yellow-400', 'scale-110');
-                    star.classList.add('text-gray-300');
-                });
-                document.getElementById('rating-text').textContent = 'Klik bintang untuk rating';
+                ratingText.textContent = 'Klik bintang untuk rating';
+                ratingText.classList.remove('text-warning', 'text-success', 'fw-bold');
+                ratingText.classList.add('text-muted');
             }
-            document.getElementById('rating-text').classList.remove('text-yellow-600');
-            document.getElementById('rating-text').classList.add('text-indigo-600');
         }
 
         function selectStar(rating) {
             selectedRating = rating;
-            document.getElementById('rating-text').textContent = '✓ ' + ratingLabels[rating];
-            document.getElementById('rating-text').classList.remove('text-yellow-600');
-            document.getElementById('rating-text').classList.add('text-green-600');
 
-            // Check the radio button
-            document.querySelector(`input[name="rating"][value="${rating}"]`).checked = true;
+            // Update hidden input
+            document.getElementById('rating-input').value = rating;
+
+            // Update UI
+            highlightStars(rating);
+
+            const ratingText = document.getElementById('rating-text');
+            ratingText.textContent = '✓ ' + ratingLabels[rating];
+            ratingText.classList.remove('text-warning');
+            ratingText.classList.add('text-success', 'fw-bold');
         }
     </script>
 </x-app-layout>

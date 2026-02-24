@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Models\Barber;
+use App\Models\Review;
 use Illuminate\View\View;
 
 class BarberController extends Controller
@@ -40,6 +41,14 @@ class BarberController extends Controller
         $barber = Barber::with(['user', 'services', 'reviews.user'])
             ->findOrFail($id);
 
-        return view('barbers.show', compact('barber'));
+        // Get user's review if logged in and has reviewed this barber
+        $userReview = null;
+        if (auth()->check() && auth()->user()->role === 'user') {
+            $userReview = Review::where('barber_id', $id)
+                ->where('user_id', auth()->id())
+                ->first();
+        }
+
+        return view('barbers.show', compact('barber', 'userReview'));
     }
 }

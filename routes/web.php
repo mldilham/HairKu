@@ -12,9 +12,7 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/barbers', [BarberController::class, 'index'])->name('barbers.index');
 Route::get('/barbers/{id}', [BarberController::class, 'show'])->name('barbers.show');
 
-Route::get('/user/dashboard', function () {
-    return view('dashboard.user');
-})->middleware(['auth', 'verified', 'role:user'])->name('user.dashboard');
+Route::get('/user/dashboard', [App\Http\Controllers\User\BookingController::class, 'dashboard'])->middleware(['auth', 'verified', 'role:user'])->name('user.dashboard');
 
 Route::get('/barber/dashboard', function () {
     return view('dashboard.barber');
